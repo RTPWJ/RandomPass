@@ -1,6 +1,7 @@
 /*
 Name: Alexander Georgiadis (RezTech)
 Date Started: 2/25/2016
+Last Updated: 2/26/2016
 Description: This is a partially complex random password generator, to be used with RTPWJ (Ready To Program With Java).
 */
 
@@ -28,17 +29,32 @@ public class RandomPass_Educational
 
     public static int getLength (int passLength)
     {
-        c.println ("Welcome to JARPG!"); //Just Another Random Password Generator
-        c.println ("How long would you like the password to be?");
-        passLength = c.readInt ();
-        c.clear (); //Clean up any old promps so we don't fill the screen
+        //Variables
+        String passLengthStr;
+        boolean isNumber = false;
 
-        //Make sure we are not working with 0 or negative numbers
-        while (passLength <= 0)
+        //Prompt the customer
+        c.println ("Welcome to JARPG!"); //Just Another Random Password Generator
+        while (isNumber != true)
         {
-            c.println ("Please enter a number greater then 0!");
-            passLength = c.readInt ();
-            c.clear ();
+            c.println ("How long would you like the password to be? (Between 1 - 9999999)");
+            passLengthStr = c.readString ();
+
+            //Check to see if the user actualy inputed an int
+            try
+            {
+                passLength = (Integer.parseInt (passLengthStr)); //If this cannot be done, it will be caught, and we will re-prompt
+                if (passLength > 0) //Make sure that the int is greater then 0
+                {
+                    isNumber = true;
+                }
+                c.clear ();
+            }
+            catch (NumberFormatException e)
+            {
+                c.clear ();
+                c.println ("Please insert a number greater then 0!");
+            }
         }
         return passLength; //We will be needing this int later
     }
@@ -47,8 +63,7 @@ public class RandomPass_Educational
     public static void makePass (int passLength)  //We can use passLength twice since it is a local variable, unlike length, which is passed onto this method
     {
         //Varibales
-        int option;
-        char passChar[] = new char [passLength]; //Create an array for us to store the password in
+        char passChar[] = new char [passLength], genAgain = '0', option = '0'; //Create an array for us to store the password in, as well as some checks for our inputs
         double ASCII;
 
         //Start our password generation
@@ -64,22 +79,25 @@ public class RandomPass_Educational
         }
 
         //Prompt our customer to see what format they would like their output in
-        c.println ("Which of the following formats would you like your password to be displayed using?");
-        c.println ("1. Text File");
-        c.println ("2. Console");
-        option = c.readInt ();
+        while (option != '1' && option != '2')
+        {
+            c.println ("Which of the following formats would you like your password to be displayed using?");
+            c.println ("1. Text File");
+            c.println ("2. Console");
+            option = c.getChar ();
+        }
 
         switch (option) //We can use either a switch, or a combination of if, else if, and else. We will stick with a switch, it looks cleaner
         {
-            case 1:
+            case '1':
                 {
                     //Variable
                     String fileName;
-                    
+
                     //Prompt for the .TXT name
-                    c.println("What would you like the file to be called?");
+                    c.println ("What would you like the file to be called?");
                     fileName = c.readString ();
-                    
+
                     //Output out password to a .TXT (To allow for copy and pasting)
                     try
                     {
@@ -91,12 +109,12 @@ public class RandomPass_Educational
                             out.print (passChar [i]); //Need to use print here, so it is not one char per line
                         }
 
-                        out.close ();
+                        out.close (); //Don't need to keep the file open anymore, so close it
                     }
                     catch (IOException e)
                     {
                         c.clear ();
-                        c.println ("General I/O exception! Please re-launch the program.");
+                        c.println ("General I/O exception! Please re-launch the program."); //Seing as RTPWJ only seems to catch this exception, we will have to keep is fairly generic
                         System.exit (0);
                     }
 
@@ -106,7 +124,7 @@ public class RandomPass_Educational
                     break;
                 }
 
-            case 2:
+            case '2':
                 {
                     c.clear ();
                     c.println ("Your randomly generated password is:"); //Just a nice prompt so the customer knows what the output is
@@ -115,13 +133,32 @@ public class RandomPass_Educational
                     {
                         c.print (passChar [i]); //Need to use print here, so it is not one char per line
                     }
+                    c.println ("\n"); //Make sure that our next prompt will be on the next line
                     break;
                 }
-            default:
+        }
+
+        //Multi-generation support
+        while (genAgain != ('1') && genAgain != ('2')) //Need to use and here, because both conditions need to fail, not just one
+        {
+            c.println ("Would you like to generate another password?");
+            c.println ("1. Yes");
+            c.println ("2. No");
+            genAgain = c.getChar ();
+            c.clear ();
+        }
+
+        switch (genAgain)
+        {
+            case '1':
                 {
-                    c.clear ();
-                    c.println ("Please read the following prompt, and input either a 1, or a 2 depending on which output option you would like.");
-                    makePass (passLength); //We will need to manually re-pass this to make sure that it remembers the length of the password we want to generate
+                    passLength = getLength (passLength); //We need to store the password length again, this method should work just fine
+                    makePass (passLength);
+                    break;
+                }
+            case '2':
+                {
+                    System.exit (0);
                 }
         }
     }
