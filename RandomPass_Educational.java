@@ -1,7 +1,7 @@
 /*
 Name: Alexander Georgiadis (RezTech)
 Date Started: 2/25/2016
-Last Updated: 2/26/2016
+Last Updated: 4/27/2016
 Description: This is a partially complex random password generator, to be used with RTPWJ (Ready To Program With Java).
 */
 
@@ -31,29 +31,29 @@ public class RandomPass_Educational
     {
         //Variables
         String passLengthStr;
-        boolean isNumber = false;
+        boolean isValid = false;
 
         //Prompt the customer
         c.println ("Welcome to JARPG!"); //Just Another Random Password Generator
-        while (isNumber != true)
+        while (isValid != true)
         {
-            c.println ("How long would you like the password to be? (Between 1 - 9999999)");
+            c.println ("How long would you like the password to be?");
             passLengthStr = c.readString ();
 
-            //Check to see if the user actualy inputed an int
+            //Check to see if the user inputed an valid integer
             try
             {
                 passLength = (Integer.parseInt (passLengthStr)); //If this cannot be done, it will be caught, and we will re-prompt
                 if (passLength > 0) //Make sure that the int is greater then 0
                 {
-                    isNumber = true;
+                    isValid = true;
                 }
                 c.clear ();
             }
             catch (NumberFormatException e)
             {
                 c.clear ();
-                c.println ("Please insert a number greater then 0!");
+                c.println ("Please chose a valid integer (A number between 1 - 9999999)!");
             }
         }
         return passLength; //We will be needing this int later
@@ -75,7 +75,7 @@ public class RandomPass_Educational
             {
                 ASCII = (Math.random () * 140);
             }
-            passChar [i] = (char) (ASCII); //Truncate our double, and place it into a char, this will generate a random char (!-~ [See above URL])
+            passChar [i] = (char) (ASCII); //Truncate our double, and place it into a char, and move it from the buffer to the array (!-~ [See above URL])
         }
 
         //Prompt our customer to see what format they would like their output in
@@ -101,9 +101,9 @@ public class RandomPass_Educational
                     //Output out password to a .TXT (To allow for copy and pasting)
                     try
                     {
-                        PrintWriter out = new PrintWriter (new FileWriter (fileName + ".txt"));
+                        PrintWriter out = new PrintWriter (new FileWriter (fileName + ".txt")); //Create the text file with the specified name
 
-                        out.println ("The following password was generated using RezTech's JARPG:");
+                        out.println ("The following password was generated using RezTech's JARPG:"); //Quick branding on the top of the outputed file
                         for (int i = 0 ; i <= (passLength - 1) ; i++) //Another loop, just to print the password
                         {
                             out.print (passChar [i]); //Need to use print here, so it is not one char per line
@@ -114,7 +114,17 @@ public class RandomPass_Educational
                     catch (IOException e)
                     {
                         c.clear ();
-                        c.println ("General I/O exception! Please re-launch the program."); //Seing as RTPWJ only seems to catch this exception, we will have to keep is fairly generic
+                        c.println ("Error outputing file!\nPlease check to see that you have write acsess to the disk, or that the disk is not full!"); //Seing as RTPWJ only seems to catch this exception, we will have to keep is fairly generic
+
+                        //Actaully give some time before quiting so the customer can read the prompt
+                        try
+                        {
+                            Thread.sleep (6000); //6000 MS = 6 S (MS/1000=S)
+                        }
+                        catch (InterruptedException i)
+                        {
+                            System.exit (0); //If we can't delay the program shutdown, just forcefully close it
+                        }
                         System.exit (0);
                     }
 
@@ -133,7 +143,7 @@ public class RandomPass_Educational
                     {
                         c.print (passChar [i]); //Need to use print here, so it is not one char per line
                     }
-                    c.println ("\n"); //Make sure that our next prompt will be on the next line
+                    c.print ("\n"); //Make sure that our next prompt will be on the next line
                     break;
                 }
         }
@@ -158,6 +168,17 @@ public class RandomPass_Educational
                 }
             case '2':
                 {
+                    c.println ("Thank you for using JARPG!");
+
+                    //Automaticly quit the program after 4 secconds of playing the credits
+                    try
+                    {
+                        Thread.sleep (4000); //4000 MS = 4 S (MS/1000=S)
+                    }
+                    catch (InterruptedException e)  //Just incase something tries to re-wake the thread (It shouldn't, but just incase)
+                    {
+                        System.exit (0); //If we can't delay the program shutdown, just forcefully close it
+                    }
                     System.exit (0);
                 }
         }
