@@ -1,7 +1,7 @@
 /*
 Name: Alexander Georgiadis (RezTech)
 Date Started: 2/25/2016
-Last Updated: 4/27/2016
+Last Updated: 5/2/2016
 Description: This is a partially complex random password generator, to be used with RTPWJ (Ready To Program With Java).
 */
 
@@ -35,7 +35,7 @@ public class RandomPass_Educational
 
         //Prompt the customer
         c.println ("Welcome to JARPG!"); //Just Another Random Password Generator
-        while (isValid != true)
+        do //do while statements will prevent the need to pre-assign a value as a placeholder
         {
             c.println ("How long would you like the password to be?");
             passLengthStr = c.readString ();
@@ -48,14 +48,19 @@ public class RandomPass_Educational
                 {
                     isValid = true;
                 }
-                c.clear ();
+                else //Make sure we print an error if the number is negative, not just invalid to convert
+                {
+                    c.clear ();
+                    c.println ("Please chose a valid integer (A number between 1 - 9999999)!");
+                }
             }
-            catch (NumberFormatException e)
+            catch (NumberFormatException convert)
             {
                 c.clear ();
                 c.println ("Please chose a valid integer (A number between 1 - 9999999)!");
             }
         }
+        while (isValid != true);
         return passLength; //We will be needing this int later
     }
 
@@ -63,7 +68,7 @@ public class RandomPass_Educational
     public static void makePass (int passLength)  //We can use passLength twice since it is a local variable, unlike length, which is passed onto this method
     {
         //Varibales
-        char passChar[] = new char [passLength], genAgain = '0', option = '0'; //Create an array for us to store the password in, as well as some checks for our inputs
+        char passChar[] = new char [passLength], genAgain, option; //Create an array for us to store the password in, as well as some checks for our inputs
         double ASCII;
 
         //Start our password generation
@@ -79,13 +84,15 @@ public class RandomPass_Educational
         }
 
         //Prompt our customer to see what format they would like their output in
-        while (option != '1' && option != '2')
+        do
         {
+            c.clear ();
             c.println ("Which of the following formats would you like your password to be displayed using?");
             c.println ("1. Text File");
             c.println ("2. Console");
             option = c.getChar ();
         }
+        while (option != '1' && option != '2');
 
         switch (option) //We can use either a switch, or a combination of if, else if, and else. We will stick with a switch, it looks cleaner
         {
@@ -95,6 +102,7 @@ public class RandomPass_Educational
                     String fileName;
 
                     //Prompt for the .TXT name
+                    c.clear ();
                     c.println ("What would you like the file to be called?");
                     fileName = c.readString ();
 
@@ -111,7 +119,7 @@ public class RandomPass_Educational
 
                         out.close (); //Don't need to keep the file open anymore, so close it
                     }
-                    catch (IOException e)
+                    catch (IOException output)
                     {
                         c.clear ();
                         c.println ("Error outputing file!\nPlease check to see that you have write acsess to the disk, or that the disk is not full!"); //Seing as RTPWJ only seems to catch this exception, we will have to keep is fairly generic
@@ -121,7 +129,7 @@ public class RandomPass_Educational
                         {
                             Thread.sleep (6000); //6000 MS = 6 S (MS/1000=S)
                         }
-                        catch (InterruptedException i)
+                        catch (InterruptedException interrupt_output)
                         {
                             System.exit (0); //If we can't delay the program shutdown, just forcefully close it
                         }
@@ -130,7 +138,7 @@ public class RandomPass_Educational
 
                     //Print our output
                     c.clear ();
-                    c.println ("Your randomly generated password has been saved to the program runtime directory!"); //Just a nice prompt so the customer knows what the output is
+                    c.println ("Your randomly generated password has been saved to the program runtime directory!"); //Just a nice prompt so the customer knows where the output is
                     break;
                 }
 
@@ -149,7 +157,7 @@ public class RandomPass_Educational
         }
 
         //Multi-generation support
-        while (genAgain != ('1') && genAgain != ('2')) //Need to use and here, because both conditions need to fail, not just one
+        do
         {
             c.println ("Would you like to generate another password?");
             c.println ("1. Yes");
@@ -157,6 +165,7 @@ public class RandomPass_Educational
             genAgain = c.getChar ();
             c.clear ();
         }
+        while (genAgain != ('1') && genAgain != ('2'));  //Need to use and here, because both conditions need to fail, not just one
 
         switch (genAgain)
         {
@@ -175,12 +184,13 @@ public class RandomPass_Educational
                     {
                         Thread.sleep (4000); //4000 MS = 4 S (MS/1000=S)
                     }
-                    catch (InterruptedException e)  //Just incase something tries to re-wake the thread (It shouldn't, but just incase)
+                    catch (InterruptedException interuppt_exit)  //Just incase something tries to re-wake the thread
                     {
                         System.exit (0); //If we can't delay the program shutdown, just forcefully close it
                     }
-                    System.exit (0);
+                    System.exit (0); //Because we are exiting the program, we do not need a break, as the code will be terminated
                 }
+                //Default statement is not needed here, as we force the responce of either 1 or 2 in the previous statement
         }
     }
 }
