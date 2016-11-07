@@ -19,11 +19,12 @@ public class RandomPass_Educational
         c = new Console ();
 
         //Variables
-        int length = 0; //Length needs to be assigned a value before it can be used to store the return of a method
+        int length = 0, count = 0; //Value needs to be assigned a value before it can be used to store the return of a method
 
         //Let's make out password
         length = getLength (length);
-        makePass (length);
+        count = getCount (count);
+        makePass (length, count);
     }
 
 
@@ -65,23 +66,66 @@ public class RandomPass_Educational
     }
 
 
-    public static void makePass (int passLength)  //We can use passLength twice since it is a local variable, unlike length, which is passed onto this method
+    public static int getCount (int passCount)
+    {
+        //Variables
+        String passCountStr;
+        boolean isValid = false;
+
+        //Prompt the customer
+        do
+        {
+            c.println ("Okay, now how many unique passwords should we generate?");
+            passCountStr = c.readString ();
+
+            //Check to see if the user inputed an valid integer
+            try
+            {
+                passCount = (Integer.parseInt (passCountStr)); //If this cannot be done, it will be caught, and we will re-prompt
+                if (passCount > 0) //Make sure that the int is greater then 0
+                {
+                    isValid = true;
+                }
+                else //Make sure we print an error if the number is negative, not just invalid to convert
+                {
+                    c.clear ();
+                    c.println ("Please chose a valid integer (A number between 1 - 9999999)!");
+                }
+            }
+            catch (NumberFormatException convert)
+            {
+                c.clear ();
+                c.println ("Please chose a valid integer (A number between 1 - 9999999)!");
+            }
+        }
+
+
+        while (isValid != true);
+        return passCount; //We will be needing this int later
+    }
+
+
+    public static void makePass (int passLength, int passCount)  //We can use passLength twice since it is a local variable, unlike length, which is passed onto this method
     {
         //Varibales
-        char passChar[] = new char [passLength], genAgain, option; //Create an array for us to store the password in, as well as some checks for our inputs
+        char passChar[] [] = new char [passLength] [passCount], genAgain, option; //Create an array for us to store the password in, as well as some checks for our inputs
         double ASCII;
 
         //Start our password generation
-        for (int i = 0 ; i <= (passLength - 1) ; i++)
+        for (int f = 0 ; f <= (passCount - 1) ; f++) //Using a 3D array, we can generate X number of passwords and store them
         {
-            ASCII = (Math.random () * 140); //The maximum value is 126, so we multiply by it by 140 (.9*140 = 126)
-
-            while (ASCII > 126 || ASCII < 33) //Make sure only visible characters are generated (http://tinyurl.com/RTPJW-ASCII)
+            for (int i = 0 ; i <= (passLength - 1) ; i++)
             {
-                ASCII = (Math.random () * 140);
+                ASCII = (Math.random () * 140); //The maximum value is 126, so we multiply by it by 140 (.9*140 = 126)
+
+                while (ASCII > 126 || ASCII < 33) //Make sure only visible characters are generated (http://tinyurl.com/RTPJW-ASCII)
+                {
+                    ASCII = (Math.random () * 140);
+                }
+                passChar [i] [f] = (char) (ASCII); //Truncate our double, and place it into a char, and move it from the buffer to the array (!-~ [See above URL])
             }
-            passChar [i] = (char) (ASCII); //Truncate our double, and place it into a char, and move it from the buffer to the array (!-~ [See above URL])
         }
+
 
         //Prompt our customer to see what format they would like their output in
         do
@@ -92,6 +136,8 @@ public class RandomPass_Educational
             c.println ("2. Console");
             option = c.getChar ();
         }
+
+
         while (option != '1' && option != '2');
 
         switch (option) //We can use either a switch, or a combination of if, else if, and else. We will stick with a switch, it looks cleaner
@@ -111,10 +157,14 @@ public class RandomPass_Educational
                     {
                         PrintWriter out = new PrintWriter (new FileWriter (fileName + ".txt")); //Create the text file with the specified name
 
-                        out.println ("The following password was generated using RezTech's JARPG:"); //Quick branding on the top of the outputed file
-                        for (int i = 0 ; i <= (passLength - 1) ; i++) //Another loop, just to print the password
+                        out.print ("The following password(s) where generated using RezTech's JARPG:"); //Quick branding on the top of the outputed file
+                        for (int f = 0 ; f <= (passCount - 1) ; f++)
                         {
-                            out.print (passChar [i]); //Need to use print here, so it is not one char per line
+                            out.print ("\n"); //Make sure there is a space between each password
+                            for (int i = 0 ; i <= (passLength - 1) ; i++) //Another loop, just to print the password
+                            {
+                                out.print (passChar [i] [f]); //Need to use print here, so it is not one char per line
+                            }
                         }
 
                         out.close (); //Don't need to keep the file open anymore, so close it
@@ -145,16 +195,21 @@ public class RandomPass_Educational
             case '2':
                 {
                     c.clear ();
-                    c.println ("Your randomly generated password is:"); //Just a nice prompt so the customer knows what the output is
+                    c.print ("Your randomly generated password(s) are:"); //Just a nice prompt so the customer knows what the output is
 
-                    for (int i = 0 ; i <= (passLength - 1) ; i++) //Another loop, just to print the password
+                    for (int f = 0 ; f <= (passCount - 1) ; f++)
                     {
-                        c.print (passChar [i]); //Need to use print here, so it is not one char per line
+                        c.print ("\n"); //Make sure there is a space between each password
+                        for (int i = 0 ; i <= (passLength - 1) ; i++) //Another loop, just to print the password
+                        {
+                            c.print (passChar [i] [f]); //Need to use print here, so it is not one char per line
+                        }
                     }
                     c.print ("\n"); //Make sure that our next prompt will be on the next line
                     break;
                 }
         }
+
 
         //Multi-generation support
         do
@@ -165,6 +220,8 @@ public class RandomPass_Educational
             genAgain = c.getChar ();
             c.clear ();
         }
+
+
         while (genAgain != ('1') && genAgain != ('2'));  //Need to use and here, because both conditions need to fail, not just one
 
         switch (genAgain)
@@ -172,7 +229,8 @@ public class RandomPass_Educational
             case '1':
                 {
                     passLength = getLength (passLength); //We need to store the password length again, this method should work just fine
-                    makePass (passLength);
+                    passCount = getCount (passCount);
+                    makePass (passLength, passCount);
                     break;
                 }
             case '2':
