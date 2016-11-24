@@ -5,12 +5,13 @@ Last Updated: 5/2/2016
 Description: This is a partially complex random password generator, to be used with RTPWJ (Ready To Program With Java).
 */
 
-import java.awt.*;
-import java.io.*; //Needed for the I/O related code
+//Needed for the I/O related code
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import hsa.Console;
 
-public class RandomPass_Educational
-{
+public class RandomPass_Educational {
     static Console c;
 
     public static void main (String[] args)
@@ -99,7 +100,6 @@ public class RandomPass_Educational
             }
         }
 
-
         while (isValid != true);
         return passCount; //We will be needing this int later
     }
@@ -107,7 +107,7 @@ public class RandomPass_Educational
 
     public static void makePass (int passLength, int passCount)  //We can use passLength twice since it is a local variable, unlike length, which is passed onto this method
     {
-        //Varibales
+        //Variables
         char passChar[] [] = new char [passLength] [passCount], genAgain, option; //Create an array for us to store the password in, as well as some checks for our inputs
         double ASCII;
 
@@ -126,7 +126,6 @@ public class RandomPass_Educational
             }
         }
 
-
         //Prompt our customer to see what format they would like their output in
         do
         {
@@ -136,7 +135,6 @@ public class RandomPass_Educational
             c.println ("2. Console");
             option = c.getChar ();
         }
-
 
         while (option != '1' && option != '2');
 
@@ -174,7 +172,7 @@ public class RandomPass_Educational
                         c.clear ();
                         c.println ("Error outputing file!\nPlease check to see that you have write acsess to the disk, or that the disk is not full!"); //Seing as RTPWJ only seems to catch this exception, we will have to keep is fairly generic
 
-                        //Actaully give some time before quiting so the customer can read the prompt
+                        //Actually give some time before quitting so the customer can read the prompt
                         try
                         {
                             Thread.sleep (6000); //6000 MS = 6 S (MS/1000=S)
@@ -210,7 +208,6 @@ public class RandomPass_Educational
                 }
         }
 
-
         //Multi-generation support
         do
         {
@@ -220,7 +217,6 @@ public class RandomPass_Educational
             genAgain = c.getChar ();
             c.clear ();
         }
-
 
         while (genAgain != ('1') && genAgain != ('2'));  //Need to use and here, because both conditions need to fail, not just one
 
@@ -237,18 +233,18 @@ public class RandomPass_Educational
                 {
                     c.println ("Thank you for using JARPG!");
 
-                    //Automaticly quit the program after 4 secconds of playing the credits
+                    //Automatically quit the program after 4 seconds of playing the credits
                     try
                     {
                         Thread.sleep (4000); //4000 MS = 4 S (MS/1000=S)
                     }
-                    catch (InterruptedException interuppt_exit)  //Just incase something tries to re-wake the thread
+                    catch (InterruptedException interuppt_exit)  //Just in case something tries to re-wake the thread
                     {
                         System.exit (0); //If we can't delay the program shutdown, just forcefully close it
                     }
                     System.exit (0); //Because we are exiting the program, we do not need a break, as the code will be terminated
                 }
-                //Default statement is not needed here, as we force the responce of either 1 or 2 in the previous statement
+                //Default statement is not needed here, as we force the response of either 1 or 2 in the previous statement
         }
     }
 }
